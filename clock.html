@@ -1,0 +1,45 @@
+<html>
+<head>
+  <style>
+    canvas {
+      border: 1px solid #000;
+      width: 90%;
+      height: 90vh;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Clock</h1>
+  <p>Demonstrates, how the entire canvas is repainted to show animation like effect.</p>
+  <canvas id="c"></canvas>
+
+<script>
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext("2d");
+
+const c_width = canvas.width
+const c_height = canvas.height
+
+const red = '#ff0000'
+const blue = '#0000ff'
+
+let init = 10;
+let delta = 3;
+
+function moveRect() {
+  ctx.clearRect(0, 0, c_width, c_height)
+
+  ctx.fillStyle = red
+  ctx.fillRect(init += delta, 10, 30, 30)
+  ctx.save()
+
+  window.requestAnimationFrame(moveRect)
+}
+
+window.requestAnimationFrame(moveRect)
+
+</script>
+</body>
+</html>

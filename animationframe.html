@@ -1,0 +1,86 @@
+<!--
+An example of how request animation frame works and how one can control the animation framerate / speed
+
+Ref: https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame#examples
+-->
+
+<html>
+<head>
+  <style>
+    #box {
+      display: block;
+      width: 40px;
+      height: 40px;
+      background-color: red;
+      position: fixed;
+      left: 10px;
+      top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Playground</h1>
+  
+  <div id="box"></div>
+
+<script>
+  // const element = document.getElementById("box");
+  // let start;
+
+  // function step(timestamp) {
+  //   if(start === undefined) {
+  //     start = timestamp;
+  //   }
+  //   const elapsed = timestamp - start;
+  //   console.log(elapsed, timestamp, start);
+
+  //   // Math.min() is used here to make sure the element stops at exactly 200px
+  //   const shift = Math.min(0.0734 * elapsed, 200);  // by changing the `*` by value, you can control the speed
+  //   element.style.transform = `translateX(${shift}px)`;
+  //   if(shift < 200) {
+  //     requestAnimationFrame(step);
+  //   }
+  // }
+
+  // requestAnimationFrame(step);
+
+
+  const element = document.getElementById("box");
+  let start;
+
+  // Cubic Bezier function for easing (ease-out)
+  function cubicBezier(t, p0, p1, p2, p3) {
+    const u = 1 - t;
+    return (u ** 3) * p0 + 3 * (u ** 2) * t * p1 + 3 * u * (t ** 2) * p2 + (t ** 3) * p3;
+  }
+
+  // Easing parameters for ease-out (control points)
+  const easeOut = (t) => cubicBezier(t, 0, 1, 0.98, 1);
+
+  function step(timestamp) {
+    if (start === undefined) {
+      start = timestamp;
+    }
+    const elapsed = timestamp - start;
+
+    // Normalize elapsed time (assuming animation runs for 1000ms)
+    const duration = 1000;
+    const t = Math.min(elapsed / duration, 1); // t ranges from 0 to 1
+
+    // Apply easing to shift
+    const easedT = easeOut(t);
+    const shift = easedT * 200; // Map eased progress to 200px
+
+    element.style.transform = `translateX(${shift}px)`;
+
+    if(t < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+
+</script>
+</body>
+</html>

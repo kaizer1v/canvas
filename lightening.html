@@ -1,0 +1,137 @@
+<!--
+data ref: https://www.cdc.gov/lightning/data-research/index.html
+ligntening effect: https://editor.p5js.org/dlatolley/sketches/Bu3JRNqgF
+-->
+<html>
+<head>
+  <style>
+    canvas {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lightening</h1>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.2/p5.min.js"></script>
+<script>
+
+let obj_x;
+let box;
+
+function setup() {
+  createCanvas(600, 600)
+  background('#0000ff')
+  strokeWeight(5)
+  stroke('#f1f1f1')
+  setClouds()
+
+  // set an object at x_pos on the ground
+  obj_x = int(random(0, width))
+  let l_break_points = 5;
+  let l_break_intervals = height / l_break_points;
+  
+  // place the item randomly on the ground
+  box = new Item(obj_x)
+  box.placeItem()
+}
+
+function draw() {
+  setClouds()
+}
+
+function setClouds() {
+  // Set the noise level and scale.
+  let noiseLevel = 255;
+  let noiseScale = 0.009;
+
+  // Iterate from top to bottom.
+  for(let y = 0; y < height / 4; y += 1) {
+    // Iterate from left to right.
+    for(let x = 0; x < width; x += 1) {
+      // Scale the input coordinates.
+      let nx = noiseScale * x;
+      let ny = noiseScale * y;
+      let nt = noiseScale * frameCount;
+
+      // Compute the noise value.
+      let c = noiseLevel * noise(nx, ny, nt);
+
+      // Draw the point.
+      stroke(c);
+      point(x, y);
+    }
+  }
+}
+
+class Item {
+  constructor(x_pos) {
+    // pick a random x_pos of object to be placed
+    this.x_pos = x_pos
+    this.sq_dimension = 50
+  }
+  
+  placeItem() {
+    // place the object on the ground
+    fill('grey')
+    square(this.x_pos, height - this.sq_dimension, this.sq_dimension)
+  }
+  
+  isHit(strike_point) {
+    return (strike_point >= this.x_pos - 10 && strike_point <= this.x_pos + this.sq_dimension + 10)
+  }
+  
+  setColour(colour) {
+    fill(colour)
+    square(this.x_pos, height - this.sq_dimension, this.sq_dimension)
+  }
+  
+}
+
+/**
+ * 
+ */ 
+class Lightening {
+  constructor(strike_point) {
+    this.strike_point = strike_point  // random number when clicked on canvas everytime
+    this.l_height = 5
+    this.l_points = []
+    for(let i = this.l_height; i >= 2; i--) {
+      this.l_points.push([int(random(0, width)), height / i])
+    }
+    // last point of strike should be the strike_point
+    this.l_points.push([strike_point, height])
+  }
+  
+  strike() {
+    for(let i = 1; i < this.l_points.length; i++) {
+      line(...this.l_points[i], ...this.l_points[i - 1])
+    }
+  } 
+}
+
+
+// on click event of window
+// const canvas = document.querySelector('canvas')
+document.addEventListener('click', function() {
+  // set the scene
+  background('#0000ff')
+  box.placeItem()
+ 
+  // determine a strike point randomly
+  let hit_point = int(random(0, width))
+  
+  // the strike point is where the lightening will strike
+  let light = new Lightening(hit_point)
+  light.strike()
+  
+  // check if strike_point is where the item is placed too, if so 'kaboom'
+  if(box.isHit(hit_point)) {
+    box.setColour('red')
+  }
+})
+
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+<head>
+  <style>
+    canvas {
+      border: 1px solid #000;
+      width: 90%;
+      height: 90vh;
+    }
+  </style>
+</head>
+<body>
+  <canvas id='c'></canvas>
+
+<script src="node_modules/paper/dist/paper-full.min.js"></script>
+<script>
+  // const canvas = document.getElementById('c')
+  // paper.setup(canvas)
+  // let path = new paper.Path()
+  //     path.strokeColor = 'black'
+  
+  // let start = new paper.Point(20, 20)
+
+  // path.moveTo(start)
+  // path.lineTo(start.add([45, 70]))
+
+  // paper.view.draw()
+
+  // ---- alternatively
+
+  paper.install(window)
+
+  window.onload = () => {
+    paper.setup('c')
+    
+    let start = new Point(60, 40)
+    let path = new Path()
+        path.strokeColor = 'black'
+        path.moveTo(start)
+        path.lineTo(start.add([90, 110]))
+    view.draw()
+  }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<html>
+<head>
+  <style>
+    canvas {
+      border: 1px solid #000;
+      /* width: 90%; */
+      /* height: 90vh; */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Ink Drop</h1>
+  <canvas width="600" height="400" id="c"></canvas>
+
+<script>
+
+const canvas = document.getElementById('c')
+const ctx = canvas.getContext("2d")
+const c_width = canvas.width
+const c_height = canvas.height
+ctx.fillStyle = '#da5555'
+
+function drawCircle(r) {
+  // draw a circle whose radius grows gradually but stops after reaching a value
+  ctx.beginPath()
+  // definition: arc(x, y, radius, startAngle, endAngle)
+  ctx.arc(c_width/2, c_height/2, r, 0, 2 * Math.PI)
+  ctx.fill()
+}
+
+// Cubic Bezier function for easing (ease-out)
+function cubicBezier(t, p0, p1, p2, p3) {
+  const u = 1 - t;
+  return (u ** 3) * p0 + 3 * (u ** 2) * t * p1 + 3 * u * (t ** 2) * p2 + (t ** 3) * p3
+}
+
+const easeOut = (t) => cubicBezier(t, 0, 1, 0.98, 1) // easing parameters for ease-out (control points)
+
+let start;
+function growRadius(timestamp) {
+  if(start == undefined) { start = timestamp }
+  let elapsed = timestamp - start;
+
+  const duration = 1000                             // define duration of easing out
+  const t = Math.min(elapsed / duration, 1)         // t ranges from 0 to 1
+
+  const easedT = easeOut(t)                         // apply easing to growRadius
+  const newRadius = easedT * 200;                   // change radius
+  ctx.clearRect(0, 0, c_width, c_height)            // clear the canvas
+  drawCircle(newRadius)                             // draw new circle with new radius
+  if(newRadius < 200) {                             // conditionally stop growing if radius reached 200
+    requestAnimationFrame(growRadius)
+  }
+}
+
+requestAnimationFrame(growRadius)
+
+</script>
+</body>
+</html>

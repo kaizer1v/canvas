@@ -1,0 +1,47 @@
+<html>
+<head>
+  <style>
+    canvas {
+      border: 1px solid #000;
+      width: 90%;
+      height: 90vh;
+    }
+  </style>
+</head>
+<canvas id="c"></canvas>
+<script>
+
+const canvas = document.getElementById('c');
+const c = canvas.getContext("2d");
+
+// what's the context object?
+console.log(c);
+
+const c_width = canvas.width
+const c_height = canvas.height
+const rect_width = 30;
+const rect_height = 60;
+
+// draw a rectangle
+// fillRect (x, y, width, height) -> points to the top-left corner of the rect
+// c.fillRect((c_width / 2) - (rect_width / 2), (c_height / 2) - (rect_height / 2), rect_width, rect_height);
+
+/**
+ * given a x & 
+ **/ 
+function draw_rect(x, y) {
+  c.fillRect(x, y, 10, 10)
+}
+
+// on mouse move event
+document.addEventListener('mousemove', (e) => {
+  // console.log(e)
+
+  // const c = canvas.getContext("2d");
+  // draw_rect(e.clientX, e.clientY)
+  c.clearRect(e.x, e.y, 10, 10)
+  c.fillRect(e.x, e.y, 10, 10)
+})
+
+</script>
+</html>

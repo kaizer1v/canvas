@@ -129,7 +129,8 @@
 
         // Assign the animation to a variable, so it can be stopped afterwards
         const stageElements = document.querySelectorAll("#stage a");
-        theAnimation = setInterval(function() {
+
+        function theAnimation() {
 
           // If the end of the preparedString is not reached
           if(currentIndex < preparedString.length) {
@@ -168,8 +169,10 @@
             }
 
           }
+          window.requestAnimationFrame(theAnimation)
+        };
 
-        }, 10);
+        window.requestAnimationFrame(theAnimation)
       }
 
       prepareString(sollString);
@@ -188,7 +191,7 @@
 
     function clearGrid() {
       // Clear current animation
-      clearInterval(theAnimation);
+      // clearInterval(theAnimation);
 
       document.querySelectorAll("#stage a").forEach(a => a.classList.remove("active"));
 

@@ -1,26 +1,43 @@
-let animationID, istArray, preparedString
-// First string to be injected
-let sollString = "open source software tools lay the foundation for a new generation of artists and designers, using the internet to exchange, learn, teach, share, exhibit and connect, regardless of ethnicity, nationality, age, religion or gender. creative coding reveals completely new opportunities in many ways. and this is just the beginning of the story.";
-const possibleCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.,:!ˉ';
+let animationID, preparedString
+// let sollString = "open source software tools lay the foundation for a new generation of artists and designers, using the internet to exchange, learn, teach, share, exhibit and connect, regardless of ethnicity, nationality, age, religion or gender. creative coding reveals completely new opportunities in many ways. and this is just the beginning of the story."
+let sollString = "small text"
+const possibleCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.,:!ˉ-_'
+const placeholderChar = '_'
+
 // ---- on load ----
-createGrid(8, 20)
-insertTextToGrid(sollString)
+const stage = createGrid(1, 10)
+insertTextToGrid(sollString, stage)
 
 /**
  * given cols and rows, create a grid of divs
  * 
  * @param {number} rows - the number of rows
  * @param {number} cols - the number of columns
+ * @returns {htmlDOM} - the grid stage (set of <a> elements)
  */
-function createGrid(rows = 8, cols = 20) {
+function createGrid(rows, cols) {
   const stage = document.getElementById('stage')
   stage.innerHTML = ''
 
   for(let i = 0; i < rows * cols; i++) {
     const cell = document.createElement('a')
-    cell.textContent = 'ˉ'
+    cell.textContent = placeholderChar
     stage.appendChild(cell)
   }
+
+  return stage
+}
+
+/**
+ * given text and the grid stage, insert the text into the grid
+ * 
+ * @param {str} txt - the text to insert on the grid
+ * @param {htmlDOM} stage - the grid stage (set of <a> elements)
+ */
+function insertTextToGrid(txt, stage) {
+  // prepare the text for the grid. This will remove all special characters and replace them with 'ˉ'
+  const {prep_str, words} = prepareString(txt)
+  animateGrid(prep_str, words, stage)
 }
 
 
@@ -31,8 +48,8 @@ function createGrid(rows = 8, cols = 20) {
  * @returns {object} - the prepared string and the single words
  */
 function prepareString(str) {
-  preparedString = str.replace(/’|\s|[^\w\s.,_-–]|ˉ{2,}/g, 'ˉ').toUpperCase()
-  singleWords = preparedString.replace(/[.,]/g, '').toLowerCase().split('ˉ')
+  preparedString = str.replace(/’|\s|[^\w\s.,_]|ˉ{2,}/g, placeholderChar).toUpperCase()
+  singleWords = preparedString.replace(/[.,]/g, '').toLowerCase().split(placeholderChar)
 
   return {
     'prep_str': preparedString,
@@ -43,68 +60,50 @@ function prepareString(str) {
 /**
    * given the rows and cols, animate the grid with the prepared string
    * 
-   * @param {int} rows - the number of rows
-   * @param {int} cols - the number of columns
+   * @param {htmlDOM} stage - the stage HTML object
    */
-function animateGrid(preparedString, singleWords, rows = 8, cols = 20) {
-  // Assign the animation to a variable, so it can be stopped afterwards
-  const stageElements = document.querySelectorAll("#stage a");
-  let lastTime = 0;
-  let fps = 50; // frames per second
-  let interval = 1000 / fps;
+function animateGrid(preparedString, singleWords, stage) {
 
-  let possibleIndex = 0;
-  let currentWord = 0;
-  let currentIndex = 0;
-  let targetIndex = 0;
-  // The istArray represents all interim states of the grid
-  istArray = [];
+  // Assign the animation to a variable, so it can be stopped afterwards
+  const stageElements = stage.childNodes
+  const stageSize = stageElements.length
+
+  let lastTime = 0
+  let fps = 50 // frames per second
+  let interval = 1000 / fps
+
+  let possibleIndex = 0
+  let currentIndex = 0
+  let targetIndex = 0
 
   function theAnimation(timestamp) {
     // check if the time since the last frame is bigger than the interval (to control the speed of the animation)
     if(timestamp - lastTime >= interval) {
-      lastTime = timestamp; // Update last frame time
-      // If the end of the preparedString is not reached
-      if(currentIndex < preparedString.length) {
+      lastTime = timestamp // Update last frame time
 
-          // If the end of the grid is reached, go back to the first position
-        if(currentIndex >= cols * rows) {
-          currentIndex = 0;
-        }
-
-        // If the letter is not the right one yet
-        if(istArray[currentIndex] != preparedString[targetIndex]) {
-          // rotate the letter one more step
-          istArray[currentIndex] = possibleCharacters[possibleIndex];
-          stageElements[currentIndex].innerHTML = istArray[currentIndex];
-          possibleIndex++;
-        } else {
-
-          // If the letter is the right one
-          // Add a title to the element, if it is part of a word
-          if(preparedString[currentIndex] != 'ˉ' &&
-            preparedString[currentIndex] != '.' &&
-            preparedString[currentIndex] != ',') {
-            stageElements[currentIndex].setAttribute("title", singleWords[currentWord]);
-          }
-
-          // Go to next letter
-          possibleIndex = 0;
-          currentIndex++;
-          targetIndex++;
-
-          // If the end of a word is reached
-          if(preparedString[targetIndex] == 'ˉ') {
-            currentWord++;
-          }
-
-        }
-
+      // If the end of the string (last char) is reached, stop the animation
+      if(currentIndex > preparedString.length - 1) {
+        window.cancelAnimationFrame(animationID)
+        return
       }
 
+      // If the end of the grid is reached, go back to the first position
+      if(currentIndex >= stageSize) { currentIndex = 0 }
+
+      if(preparedString[targetIndex] == possibleCharacters[possibleIndex]) {
+        // display matched char on the grid
+        stageElements[currentIndex].innerHTML = preparedString[targetIndex]
+        currentIndex++
+        targetIndex++
+        possibleIndex = 0
+      } else {
+        // display next possible char on the grid
+        stageElements[currentIndex].innerHTML = possibleCharacters[possibleIndex]
+        possibleIndex++
+      }
     }
     animationID = window.requestAnimationFrame(theAnimation)
-  };
+  }
 
   window.requestAnimationFrame(theAnimation)
 }
@@ -145,10 +144,8 @@ function clearGrid() {
   window.requestAnimationFrame(clearingAnimation)
 }
 
-function insertTextToGrid(txt) {
-  const {prep_str, words} = prepareString(txt)
-  animateGrid(prep_str, words)
-}
+
+
 
 document.addEventListener('click', (event) => {
   const target = event.target

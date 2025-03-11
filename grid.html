@@ -1,17 +1,13 @@
 <html>
 
 <head>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    @font-face {
-      font-family: 'space mono';
-      src: url("assets/SpaceMono-Regular.woff");
-      font-weight: normal;
-    }
-
-    @font-face {
-      font-family: 'space mono';
-      src: url("assets/SpaceMono-Bold.woff");
-      font-weight: bold;
+    * {
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 800;
+      font-style: bold;
     }
 
     body {
@@ -29,7 +25,6 @@
       font-weight: bold;
       letter-spacing: 0.3vw;
       line-height: 90%;
-      font-family: 'space mono', monospace;
       cursor: pointer;
     }
 
@@ -37,6 +32,10 @@
     a:hover {
       color: white;
       text-decoration: none;
+    }
+
+    a {
+      margin: 0.5rem 0;
     }
 
     .active {

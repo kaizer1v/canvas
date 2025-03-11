@@ -1,11 +1,11 @@
 let animationID, preparedString
 // let sollString = "open source software tools lay the foundation for a new generation of artists and designers, using the internet to exchange, learn, teach, share, exhibit and connect, regardless of ethnicity, nationality, age, religion or gender. creative coding reveals completely new opportunities in many ways. and this is just the beginning of the story."
-let sollString = "small text"
+let sollString = 'Creators need an immediate connection to what they create'
 const possibleCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.,:!ˉ-_'
 const placeholderChar = '_'
 
 // ---- on load ----
-const stage = createGrid(1, 10)
+const stage = createGrid(sollString.length / 2, sollString.split(' ').length / 2)
 insertTextToGrid(sollString, stage)
 
 /**
@@ -58,10 +58,10 @@ function prepareString(str) {
 }
 
 /**
-   * given the rows and cols, animate the grid with the prepared string
-   * 
-   * @param {htmlDOM} stage - the stage HTML object
-   */
+ * given the rows and cols, animate the grid with the prepared string
+ * 
+ * @param {htmlDOM} stage - the stage HTML object
+ */
 function animateGrid(preparedString, singleWords, stage) {
 
   // Assign the animation to a variable, so it can be stopped afterwards

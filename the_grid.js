@@ -1,11 +1,17 @@
 let animationID, preparedString
 // let sollString = "open source software tools lay the foundation for a new generation of artists and designers, using the internet to exchange, learn, teach, share, exhibit and connect, regardless of ethnicity, nationality, age, religion or gender. creative coding reveals completely new opportunities in many ways. and this is just the beginning of the story."
-let sollString = 'Creators need an immediate connection to what they create'
-const possibleCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.,:!ˉ-_'
+const quotes = [
+  'Creators need an immediate connection to what they create',
+  'Minimum viable planet',
+  'The two golden rules of information design: Show the data. Show comparisons.',
+  'It can take time to find a principle because finding a principle is essentially a form of self-discovery'
+]
+let sollString = quotes[Math.floor(Math.random() * quotes.length)]
+const possibleCharacters = '.,:!ˉ-_ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890'
 const placeholderChar = '_'
 
 // ---- on load ----
-const stage = createGrid(sollString.length / 2, sollString.split(' ').length / 2)
+const stage = createGrid(8, 20)
 insertTextToGrid(sollString, stage)
 
 /**
@@ -112,32 +118,36 @@ function animateGrid(preparedString, singleWords, stage) {
  * clears the grid and stops the grid animation
  * 
  */
-function clearGrid() {
+function clearGrid(stage) {
   // Clear current animation
   window.cancelAnimationFrame(animationID)
 
-  const anchors = document.querySelectorAll('#stage a')
-  anchors.forEach(a => a.classList.remove('active'))
+  // const anchors = document.querySelectorAll('#stage a')
+  const anchors = stage.childNodes
+  const speed = 50 // fps
 
-  let clearCount = 0;
+  anchors.forEach(a => a.classList.remove('active'))
+  let clearCount = 0
+  
   function clearingAnimation() {
-    for(let i = 0; i < istArray.length + 1; i++) {
-      const element = document.querySelector(`#stage a:nth-child(${i})`);
-      if(element && element.innerHTML !== 'ˉ') {
-        const randomLetter = possibleCharacters[Math.floor(Math.random() * possibleCharacters.length)];
-        element.innerHTML = randomLetter;
+    for(let i = 0; i < anchors.length + 1; i++) {
+      const element = anchors[i]
+      
+      if(element && element.innerHTML !== placeholderChar) {
+        const randomLetter = possibleCharacters[Math.floor(Math.random() * possibleCharacters.length)]
+        element.innerHTML = randomLetter
       }
     }
 
-    clearCount++;
-    if(clearCount < 10) { // Run the clearing animation for 10 frames
+    clearCount++
+    if(clearCount < speed) {
       window.requestAnimationFrame(clearingAnimation)
     } else {
       anchors.forEach(a => {
-        a.innerHTML = 'ˉ';
-        a.classList.remove('active');
-        a.removeAttribute('title');
-      });
+        a.innerHTML = placeholderChar
+        // a.classList.remove('active')
+        // a.removeAttribute('title')
+      })
     }
   }
 
@@ -149,9 +159,12 @@ function clearGrid() {
 
 document.addEventListener('click', (event) => {
   const target = event.target
-  if(target.tagName === 'A' && target.getAttribute('title')) {
-    clearGrid()
-    loadAPI(target.title)
+  // if(target.tagName === 'A' && target.getAttribute('title')) {
+  if(target.tagName === 'A') {
+    clearGrid(stage)
+    // load another text
+    insertTextToGrid(quotes[Math.floor(Math.random() * quotes.length)], stage)
+    // loadAPI(target.title)
   }
 })
 

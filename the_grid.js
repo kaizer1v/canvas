@@ -3,7 +3,7 @@ let animationID, preparedString
 const quotes = [
   'Creators need an immediate connection to what they create',
   'Minimum viable planet',
-  'The two golden rules of information design: Show the data. Show comparisons.',
+  'The two golden rules of information design. Show the data. Show comparisons.',
   'It can take time to find a principle because finding a principle is essentially a form of self-discovery'
 ]
 let sollString = quotes[Math.floor(Math.random() * quotes.length)]
